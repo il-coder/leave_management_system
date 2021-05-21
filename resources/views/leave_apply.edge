@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #F7F8FA;
+      font-family: 'Poppins', sans-serif;
+      color: #46444c;
+      position: relative;
+      border: solid 6px #5A45FF;
+      height: 100vh;
+    }
+
+    main {
+      margin: auto;
+      margin-top: 5vh;
+      max-height: 60vh;
+      padding: 0 30px;
+      overflow: auto;
+      text-align: center;
+    }
+
+    main table {
+      width: 100%;
+      text-align: center;
+      overflow: auto;
+      border-collapse: collapse;
+    }
+
+    main table td,th,tr {
+      border: 3px solid #ddd;
+      padding: 8px;
+    }
+
+    button {
+      background-color: #4CAF50; /* Green */
+      border: none;
+      color: white;
+      padding: 7px 16px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+    }
+
+    button:hover {
+      cursor: pointer;
+    }
+
+    header {
+      margin-top: 5vh;
+      text-align: center;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 0;
+      background-color: #232F3E;
+      color: #fff;
+      width: 100%;
+      text-align: center;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>User Leave Applications</h1>
+  </header>
+  <main>
+    <form action="/addNewApplication" method="POST">
+      <input id="username" name="username" style="display: none;" value="{{user.username}}">
+      <label for='date'>Select date : </label>
+      <input type="date" id="date" name='date' required pattern="\d{4}-\d{2}-\d{2}" oninput="javscript:validate()">
+      <div id="hiddenForm" style="display: none;">
+        <label for='email'>Enter Email-ID : </label>
+        <input type="email" id="email" name='email'>
+        <label for='reason'>Enter reason : </label>
+        <input type="text" id="reason" name='reason'>
+        <button type="submit">Apply</button>
+      </div>
+    </form>
+    <br>
+    <hr>
+    <h2>MY Applications</h3>
+
+    <table>
+      <tr>
+        <th>Sr. No.</th>
+        <th>Applicant's Username</th>
+        <th>Team Lead Email-ID</th>
+        <th>Date for which leave applied</th>
+        <th>Reason for leave</th>
+        <th>Status</th>
+      </tr>
+      @if(!applications || applications.length == 0)
+        <tr><td colspan="6">No leave applications</td></tr>
+      @else
+        @set('counter',1)
+        @each(application in applications)
+          <tr>
+            <td>{{counter}}</td>
+            <td>{{application.username}}</td>
+            <td>{{application.email}}</td>
+            <td>{{application.date.toDateString()}}</td>
+            <td>{{application.reason}}</td>
+            <td>{{application.status}}</td>
+          </tr>
+          @set('counter',counter+1)
+        @end       
+      @end
+    </table>
+  </main>
+  @if(flashMessages.has('status'))
+    <footer> {{ flashMessages.get('status') }} </footer>
+    @end
+    @if(flashMessages.has('errors'))
+    <footer>
+      @each((field,error) in flashMessages.get('errors'))
+      {{field}} : {{error}} <br>
+      @end
+    </footer>
+    @end
+  <script>
+    function validate() {
+      var date = document.querySelector('input[type="date"]');
+      var currDate = new Date().toISOString().substr(0,10);
+      if(date.value <= currDate) {
+        alert("Invalid date");
+        document.querySelector("#hiddenForm").style.display = 'none';
+      }
+      else {
+        document.querySelector("#hiddenForm").style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>

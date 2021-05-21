@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #F7F8FA;
+      font-family: 'Poppins', sans-serif;
+      color: #46444c;
+      position: relative;
+      border: solid 6px #5A45FF;
+      height: 100vh;
+    }
+
+    main {
+      margin: auto;
+      margin-top: 5vh;
+      max-height: 60vh;
+      padding: 0 30px;
+      overflow: auto;
+    }
+
+    main table {
+      width: 100%;
+      text-align: center;
+      overflow: auto;
+      border-collapse: collapse;
+    }
+
+    main table td,th,tr {
+      border: 3px solid #ddd;
+      padding: 8px;
+    }
+
+    a {
+      background-color: #4CAF50; /* Green */
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+    }
+
+    a:hover {
+      cursor: pointer;
+    }
+
+    header {
+      margin-top: 5vh;
+      text-align: center;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 0;
+      background-color: #232F3E;
+      color: #fff;
+      width: 100%;
+      text-align: center;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin Leave Applications Dashboard</h1>
+  </header>
+  <main>
+    <table>
+      <tr>
+        <th>Sr. No.</th>
+        <th>Applicant's Username</th>
+        <th>Email-ID at which applied</th>
+        <th>Date for which leave applied</th>
+        <th>Reason for leave</th>
+        <th>Take Action</th>
+      </tr>
+      @if(!applications || applications.length == 0)
+        <tr><td colspan="6">No pending leave applications</td></tr>
+      @else
+        @set('counter',1)
+        @each(application in applications)
+          <tr>
+            <td>{{counter}}</td>
+            <td>{{application.username}}</td>
+            <td>{{application.email}}</td>
+            <td>{{application.date.toDateString()}}</td>
+            <td>{{application.reason}}</td>
+            <td><a href='/admin/accept?username={{application.username}}&email={{application.email}}&date={{application.date}}'>Accept</a>&nbsp;&nbsp;&nbsp;
+            <a href='/admin/reject?username={{application.username}}&email={{application.email}}&date={{application.date}}'>Reject</a></td>
+          </tr>
+          @set('counter',counter+1)
+        @end       
+      @end
+    </table>
+  </main>
+  @if(flashMessages.has('status'))
+  <footer> {{ flashMessages.get('status') }} </footer>
+  @end
+  @if(flashMessages.has('errors'))
+  <footer>
+    @each((field,error) in flashMessages.get('errors'))
+    {{field}} : {{error}} <br>
+    @end
+  </footer>
+  @end
+
+</body>
+</html>

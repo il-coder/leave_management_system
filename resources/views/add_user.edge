@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add/Edit User</title>
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #F7F8FA;
+      font-family: 'Poppins', sans-serif;
+      color: #46444c;
+      position: relative;
+      border: solid 6px #5A45FF;
+      height: 100vh;
+    }
+
+    main {
+      margin: auto;
+      margin-top: 5vh;
+      max-height: 60vh;
+      padding: 0 30px;
+      overflow: auto;
+      text-align: center;
+    }
+
+    .div-left {
+        width: 40vw;
+        display: inline-block;
+        text-align: right;
+        padding-right: 5px;
+        margin-bottom: 2vh;
+    }    
+
+    .div-right {
+        width: 40vw;
+        display: inline-block;
+        padding-left: 5px;
+        text-align: left;
+        margin-bottom: 2vh;
+    }    
+
+    button {
+      background-color: #4CAF50; /* Green */
+      border: none;
+      color: white;
+      padding: 7px 15px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+    }
+
+    button:hover {
+      cursor: pointer;
+    }
+
+    header {
+      margin-top: 5vh;
+      text-align: center;
+    }
+
+    p {
+      position: absolute;
+      bottom: 0;
+      background-color: #232F3E;
+      color: #fff;
+      width: 100%;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+        <h1>Add/Edit User</h1>
+  </header>
+  <main>
+      @if(user)
+        <form action="/editUser" method="POST">
+            <input id="orgusername" name="orgusername" style="display: none;" value="{{user.username}}">
+            <input id="orgemail" name="orgemail" style="display: none;" value="{{user.email}}">
+            <div class="div-left">
+                <label for='username'>Enter username : </label>
+            </div>
+            <div class="div-right">
+                <input type="text" id="username" name='username' value="{{user.username}}">
+            </div>
+            <div class="div-left">
+                <label for='email'>Enter Email-ID : </label>
+            </div>
+            <div class="div-right">
+                <input type="email" id="email" name='email' value="{{user.email}}">
+            </div>
+            <div class="div-left">
+                <label for='password'>Enter Password : </label>
+            </div>
+            <div class="div-right">
+                <input type="password" id="password" name='password' value="{{user.password}}">
+            </div>
+            <div class="div-left">
+                <label for='role'>Select Role : </label>
+            </div>
+            <div class="div-right">
+                <select id="role" name='role'>
+                    @if(user.role == 'admin')
+                        <option value="user">User</option>
+                        <option value="admin" selected>Admin</option>
+                    @else
+                        <option value="user" selected>User</option>
+                        <option value="admin">Admin</option>
+                    @end
+                </select>
+            </div><br>
+            <button type="submit">Save Changes</button>
+        </form>
+      @else
+        <form action="/addNewUser" method="POST">
+            <div class="div-left">
+                <label for='username'>Enter username : </label>
+            </div>
+            <div class="div-right">
+                <input type="text" id="username" name='username'>
+            </div>
+            <div class="div-left">
+                <label for='email'>Enter Email-ID : </label>
+            </div>
+            <div class="div-right">
+                <input type="email" id="email" name='email'>
+            </div>
+            <div class="div-left">
+                <label for='password'>Enter Password : </label>
+            </div>
+            <div class="div-right">
+                <input type="password" id="password" name='password'>
+            </div>
+            <div class="div-left">
+                <label for='role'>Select Role : </label>
+            </div>
+            <div class="div-right">
+                <select id="role" name='role'>
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div><br>
+            <button type="submit">Add User</button>
+        </form>
+      @end
+    </table>
+  </main>
+  @if(flashMessages.has('status'))
+  <p>Status =  {{ flashMessages.get('status') }} </p>
+  @end
+  @if(flashMessages.has('errors'))
+  <p>
+    @each((field,error) in flashMessages.get('errors'))
+    {{field}} : {{error}} <br>
+    @end
+  </p>
+  @end
+</body>
+</html>
