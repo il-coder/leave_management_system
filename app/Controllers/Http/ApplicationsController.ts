@@ -3,18 +3,13 @@ import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class ApplicationsController {
-    //list all pending applications
-    public async listPendingApplications({view}: HttpContextContract) {
-        const applications = await Database
-                    .from('applications')
-                    .select('*')
-                    .where('status','Pending')
-                    .orWhere('status','pending')
-        return view.render('admin_leave',{applications: applications})
-    }
-
     //update application status to accepted
-    public async acceptApplication({request, response, session}: HttpContextContract) {
+    public async acceptApplication({request, response, session, auth, params}: HttpContextContract) {
+        await auth.use('web').authenticate()
+        const user = auth.use('web').user!;
+        if(user.username != params.userName || user.role != 'admin') {
+            return response.notFound();
+        }
         const applicationSchema = schema.create({
             username: schema.string({ trim: true },[rules.exists({ table: 'applications', column: 'username' , where: {'email': request.qs()['email'], 'date': new Date(request.qs()['date']).toISOString().substr(0,10)}})]),
         })
@@ -34,12 +29,18 @@ export default class ApplicationsController {
         else {
             session.flash('status', 'Application accepted successfully')
         }
-        response.redirect('/admin/leave')
+        response.redirect().back();
         return
     }
 
     //update application status to rejected
-    public async rejectApplication({request, response, session}: HttpContextContract) {
+    public async rejectApplication({request, response, session, params, auth}: HttpContextContract) {
+        await auth.use('web').authenticate()
+        const user = auth.use('web').user!;
+        console.log(user, params.userName);
+        if(user.username != params.userName || user.role != 'admin') {
+            return response.notFound();
+        }
         const applicationSchema = schema.create({
             username: schema.string({ trim: true },[rules.exists({ table: 'applications', column: 'username' , where: {'email': request.qs()['email'], 'date': new Date(request.qs()['date']).toISOString().substr(0,10)}})]),
         })
@@ -59,25 +60,31 @@ export default class ApplicationsController {
         else {
             session.flash('status', 'Application rejected successfully')
         }
-        response.redirect('/admin/leave')
+        response.redirect().back()
         return
     }
 
     //validate and load leave application
-    public async userApplication({response, view, params}: HttpContextContract) {
-        const user = await Database
-                    .from('users')
-                    .select('*')
-                    .where('username',params.userName)
-        if(user.length <=0 ) {
+    public async userApplication({response, view, params, auth}: HttpContextContract) {
+        await auth.use('web').authenticate()
+        const user = auth.use('web').user!;
+        if(user.username != params.userName) {
             response.notFound();
+        }
+        else if(user.role == 'admin') {
+            const applications = await Database
+                    .from('applications')
+                    .select('*')
+                    .where('email', user.email)
+                    .andWhere('status','Pending')
+            return view.render('admin_leave',{user: user,applications: applications})
         }
         else {
             const applications = await Database
                     .from('applications')
                     .select('*')
                     .where('username',params.userName)
-            return view.render('leave_apply',{user: user[0], applications: applications})
+            return view.render('leave_apply',{user: user, applications: applications})
         }
     }
 

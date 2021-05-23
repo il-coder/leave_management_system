@@ -70,10 +70,25 @@
       text-align: center;
     }
 
+    .logout {
+      position: absolute;
+      top: 2vh;
+      right: 1vw;
+      background-color: #4CAF50; /* Green */
+      border: none;
+      color: white;
+      padding: 7px 12px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 12px;
+    }
+
   </style>
 </head>
 <body>
   <header>
+    <a href="/logout" class='logout'>Logout</a>
     <h1>Admin Leave Applications Dashboard</h1>
   </header>
   <main>
@@ -97,8 +112,8 @@
             <td>{{application.email}}</td>
             <td>{{application.date.toDateString()}}</td>
             <td>{{application.reason}}</td>
-            <td><a href='/admin/accept?username={{application.username}}&email={{application.email}}&date={{application.date}}'>Accept</a>&nbsp;&nbsp;&nbsp;
-            <a href='/admin/reject?username={{application.username}}&email={{application.email}}&date={{application.date}}'>Reject</a></td>
+            <td><a href='/{{user.username}}/accept?username={{application.username}}&email={{application.email}}&date={{application.date}}'>Accept</a>&nbsp;&nbsp;&nbsp;
+            <a href='/{{user.username}}/reject?username={{application.username}}&email={{application.email}}&date={{application.date}}'>Reject</a></td>
           </tr>
           @set('counter',counter+1)
         @end       

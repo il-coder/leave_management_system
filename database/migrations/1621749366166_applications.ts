@@ -10,7 +10,7 @@ export default class Applications extends BaseSchema {
       table.date('date').notNullable()
       table.text('reason').notNullable()
       table.string('status').notNullable()
-      table.primary(['username','date'])
+      table.primary(['username','email','date'])
     })
   }
 
